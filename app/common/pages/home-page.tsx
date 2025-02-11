@@ -4,16 +4,23 @@ import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { ProductCard } from "~/features/products/components/product-card";
 import { TeamCard } from "~/features/teams/components/team-card";
+import type { Route } from "~/types";
 import { Button } from "../components/ui/button";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Home | wemake" },
-    { name: "description", content: "Welcome to wemake" },
-  ];
-};
+interface HomePageProps extends Route.ComponentProps {}
 
-export default function HomePage() {
+export function meta(): MetaFunction {
+  return [
+    { title: "홈 | Product Hunt 클론" },
+    { name: "description", content: "오늘의 최고 제품들을 발견해보세요" },
+  ];
+}
+
+export function loader({}: Route.LoaderArgs) {
+  return {};
+}
+
+export default function HomePage({ loaderData }: HomePageProps) {
   return (
     <div className="px-20 space-y-40">
       <div className="grid grid-cols-3 gap-4">
