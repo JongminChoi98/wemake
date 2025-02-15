@@ -1,26 +1,17 @@
-import { Link, type MetaFunction } from "react-router";
+import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { ProductCard } from "~/features/products/components/product-card";
 import { TeamCard } from "~/features/teams/components/team-card";
-import type { Route } from "~/types";
 import { Button } from "../components/ui/button";
 
-interface HomePageProps extends Route.ComponentProps {}
+export const meta = () => [
+  { title: "Home | wemake" },
+  { name: "description", content: "Welcome to wemake" },
+];
 
-export function meta(): MetaFunction {
-  return [
-    { title: "홈 | Product Hunt 클론" },
-    { name: "description", content: "오늘의 최고 제품들을 발견해보세요" },
-  ];
-}
-
-export function loader({}: Route.LoaderArgs) {
-  return {};
-}
-
-export default function HomePage({ loaderData }: HomePageProps) {
+export default function HomePage() {
   return (
     <div className="px-20 space-y-40">
       <div className="grid grid-cols-3 gap-4">
