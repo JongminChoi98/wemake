@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { Settings } from "luxon";
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { Navigation } from "./common/components/navigation";
@@ -26,6 +27,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  Settings.defaultLocale = "en";
+  Settings.defaultZone = "America/Los_Angeles";
   return (
     <html lang="en" className="dark">
       <head>

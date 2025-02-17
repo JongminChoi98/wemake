@@ -6,7 +6,7 @@ export function loader({ params, request }: Route.LoaderArgs) {
   const { period } = params;
 
   let url = "";
-  const today = DateTime.now().setZone("Asia/Seoul");
+  const today = DateTime.now().setZone("America/Los_Angeles");
 
   if (period === "daily") {
     url = `/products/leaderboards/daily/${today.year}/${today.month}/${today.day}`;
