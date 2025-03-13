@@ -109,18 +109,20 @@ export default function MonthlyLeaderboardsPage({
         ) : null}
       </div>
 
-      {Array.from({ length: 11 }).map((_, index) => {
-        return (
-          <ProductCard
-            id={`productId-${index}`}
-            title="Product Name"
-            description="The best product made by our community today."
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={82}
-          />
-        );
-      })}
+      <div className="space-y-5 w-full max-w-screen-lg mx-auto">
+        {Array.from({ length: 11 }).map((_, index) => {
+          return (
+            <ProductCard
+              id={`productId-${index}`}
+              title="Product Name"
+              description="The best product made by our community today."
+              commentCount={12}
+              viewCount={12}
+              upvoteCount={82}
+            />
+          );
+        })}
+      </div>
 
       <ProductPagination totalPages={10} />
     </div>
