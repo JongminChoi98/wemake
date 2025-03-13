@@ -1,23 +1,28 @@
-import type { MetaFunction } from "@remix-run/react";
-import type { Route } from "~/types";
+import { Hero } from "~/common/components/hero";
+import { CategoryCard } from "../components/category-card";
+import type { Route } from "./+types/categories-page";
 
-interface CategoriesPageProps extends Route.ComponentProps {}
-
-export function meta(): MetaFunction {
+export const meta: Route.MetaFunction = () => {
   return [
-    { title: "카테고리 | Product Hunt 클론" },
-    { name: "description", content: "제품 카테고리 목록" },
+    { title: "Categories | wemake" },
+    { name: "description", content: "Product categories" },
   ];
-}
+};
 
-export function loader({}: Route.LoaderArgs) {
-  return {};
-}
-
-export default function CategoriesPage({ loaderData }: CategoriesPageProps) {
+export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
   return (
-    <div className="container py-8">
-      <h1 className="text-4xl font-bold">카테고리</h1>
+    <div className="space-y-10">
+      <Hero title="Categories" subtitle="Product categories" />
+
+      <div className="grid grid-cols-4 gap-10">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <CategoryCard
+            id={`categoryId-${index}`}
+            name="Category Name"
+            description="Category Description"
+          />
+        ))}
+      </div>
     </div>
   );
 }

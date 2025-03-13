@@ -1,25 +1,37 @@
-import type { MetaFunction } from "@remix-run/react";
-import type { Route } from "~/types";
+import { Hero } from "~/common/components/hero";
+import ProductPagination from "~/common/components/product-pagination";
+import { ProductCard } from "../components/product-card";
+import type { Route } from "./+types/category-page";
 
-interface CategoryPageProps extends Route.ComponentProps {}
-
-export function meta(): MetaFunction {
+export const meta = ({ params }: Route.MetaArgs) => {
   return [
-    { title: "카테고리 상세 | Product Hunt 클론" },
-    { name: "description", content: "카테고리별 제품 목록" },
+    { title: `Developer Tools | ProductHunt Clone` },
+    { name: "description", content: `Browse Developer Tools products` },
   ];
-}
+};
 
-export function loader({ params }: Route.LoaderArgs) {
-  return {
-    category: params.category,
-  };
-}
-
-export default function CategoryPage({ loaderData }: CategoryPageProps) {
+export default function CategoryPage() {
   return (
-    <div className="container py-8">
-      <h1 className="text-4xl font-bold">{loaderData.category} 카테고리</h1>
+    <div className="space-y-10">
+      <Hero
+        title={"Developer Tools"}
+        subtitle={`Tools for developers to build products faster`}
+      />
+
+      <div className="space-y-5 w-full max-w-screen-md mx-auto">
+        {Array.from({ length: 11 }).map((_, index) => (
+          <ProductCard
+            key={`productId-${index}`}
+            id={`productId-${index}`}
+            title="Product Name"
+            description="Product Description"
+            commentCount={12}
+            viewCount={12}
+            upvoteCount={120}
+          />
+        ))}
+      </div>
+      <ProductPagination totalPages={10} />
     </div>
   );
 }
