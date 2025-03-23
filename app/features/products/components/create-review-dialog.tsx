@@ -38,7 +38,7 @@ export function CreateReviewDialog() {
             {[1, 2, 3, 4, 5].map((star) => (
               <label
                 key={star}
-                className="relative"
+                className="relative cursor-pointer"
                 onMouseEnter={() => setHoveredStar(star)}
                 onMouseLeave={() => setHoveredStar(0)}
               >
