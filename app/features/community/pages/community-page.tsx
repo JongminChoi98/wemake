@@ -88,7 +88,7 @@ export default function CommunityPage() {
               </Form>
             </div>
             <Button asChild>
-              <Link to={`/community/new`}>Create Discussion</Link>
+              <Link to={`/community/submit`}>Create Discussion</Link>
             </Button>
           </div>
           <div className="space-y-5">
@@ -97,7 +97,7 @@ export default function CommunityPage() {
                 key={`postId-${index}`}
                 id={`postId-${index}`}
                 title="What is the best productivity tool?"
-                author="Nico"
+                author="Joey"
                 authorAvatarUrl="https://github.com/apple.png"
                 category="Productivity"
                 createdAt="12 hours ago"
