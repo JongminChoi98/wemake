@@ -16,7 +16,7 @@ interface IdeaCardProps {
   viewCount: number;
   createdAt: string;
   likeCount: number;
-  claimed: boolean;
+  claimed?: boolean;
 }
 
 export function IdeaCard({
