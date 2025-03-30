@@ -20,7 +20,7 @@ export default function SettingsPage() {
     }
   };
   return (
-    <div className="space-y-20 ">
+    <div className="space-y-20">
       <div className="grid grid-cols-6 gap-40">
         <div className="col-span-4 flex flex-col gap-10">
           <h2 className="text-2xl font-semibold">Edit profile</h2>
@@ -45,6 +45,15 @@ export default function SettingsPage() {
                 { label: "Founder", value: "founder" },
                 { label: "Other", value: "other" },
               ]}
+            />
+            <InputPair
+              label="Headline"
+              description="An introduction to your profile."
+              required
+              id="headline"
+              name="headline"
+              placeholder="John Doe"
+              textArea
             />
             <InputPair
               label="Bio"

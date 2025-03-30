@@ -178,7 +178,7 @@ export function Navigation({
                             ])}
                             key={item.name}
                           >
-                            <NavigationMenuLink>
+                            <NavigationMenuLink asChild>
                               <Link
                                 className="p-3  space-y-1 block leading-none no-underline outline-none"
                                 to={item.to}
