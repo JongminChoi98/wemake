@@ -18,6 +18,7 @@ export default function DashboardIdeasPage() {
             viewCount={123}
             createdAt="12 hours ago"
             likeCount={12}
+            claimed={true}
           />
         ))}
       </div>
