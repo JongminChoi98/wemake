@@ -8,7 +8,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-const users = pgSchema("auth").table("users", {
+export const users = pgSchema("auth").table("users", {
   id: uuid().primaryKey(),
 });
 

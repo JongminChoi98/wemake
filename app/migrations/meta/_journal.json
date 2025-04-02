@@ -15,6 +15,27 @@
       "when": 1743561032323,
       "tag": "0001_gray_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743561655395,
+      "tag": "0002_melodic_lady_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1743561744622,
+      "tag": "0003_stale_silver_surfer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1743562165329,
+      "tag": "0004_typical_hiroim",
+      "breakpoints": true
     }
   ]
 }
