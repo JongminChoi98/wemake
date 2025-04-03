@@ -36,6 +36,20 @@
       "when": 1743562165329,
       "tag": "0004_typical_hiroim",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1743562322023,
+      "tag": "0005_cooing_warstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743562389868,
+      "tag": "0006_dizzy_ink",
+      "breakpoints": true
     }
   ]
 }
