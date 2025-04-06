@@ -50,6 +50,13 @@
       "when": 1743562389868,
       "tag": "0006_dizzy_ink",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743973631672,
+      "tag": "0007_brave_moonstone",
+      "breakpoints": true
     }
   ]
 }
