@@ -1,17 +1,29 @@
+import { DateTime } from "luxon";
 import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { ProductCard } from "~/features/products/components/product-card";
+import { getProductsByDateRange } from "~/features/products/queries";
 import { TeamCard } from "~/features/teams/components/team-card";
 import { Button } from "../components/ui/button";
-
+import type { Route } from "./+types/home-page";
 export const meta = () => [
   { title: "Home | wemake" },
   { name: "description", content: "Welcome to wemake" },
 ];
 
-export default function HomePage() {
+export const loader = async () => {
+  const products = await getProductsByDateRange({
+    startDate: DateTime.now().startOf("day"),
+    endDate: DateTime.now().endOf("day"),
+    limit: 7,
+  });
+
+  return { products };
+};
+
+export default function HomePage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-40">
       <div className="grid grid-cols-3 gap-4">
@@ -28,15 +40,15 @@ export default function HomePage() {
           </Button>
         </div>
 
-        {Array.from({ length: 11 }).map((_, index) => {
+        {loaderData.products.map((product) => {
           return (
             <ProductCard
-              id={`productId-${index}`}
-              title="Product Name"
-              description="The best product made by our community today."
-              commentCount={12}
-              viewCount={12}
-              upvoteCount={82}
+              id={product.product_id.toString()}
+              title={product.name}
+              description={product.description}
+              reviewsCount={product.reviews}
+              viewsCount={product.views}
+              upvotesCount={product.upvotes}
             />
           );
         })}
@@ -59,7 +71,7 @@ export default function HomePage() {
         {Array.from({ length: 11 }).map((_, index) => {
           return (
             <PostCard
-              id={`postId-${index}`}
+              id={index}
               title="What is the best productivity tool?"
               author="Joey"
               authorAvatarUrl="https://github.com/shadcn.png"

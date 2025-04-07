@@ -6,7 +6,7 @@ import SelectPair from "~/common/components/select-pair";
 import { Button } from "~/common/components/ui/button";
 import { Input } from "~/common/components/ui/input";
 import { Label } from "~/common/components/ui/label";
-import type { Route } from "./+types/submit-page";
+import type { Route } from "./+types/submit-product-page";
 
 export const meta: Route.MetaFunction = ({}) => {
   return [

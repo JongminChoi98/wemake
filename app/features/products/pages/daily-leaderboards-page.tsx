@@ -5,11 +5,18 @@ import { Hero } from "~/common/components/hero";
 import ProductPagination from "~/common/components/product-pagination";
 import { Button } from "~/common/components/ui/button";
 import { ProductCard } from "../components/product-card";
+import { PAGE_SIZE } from "../contants";
+import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
 import type { Route } from "./+types/daily-leaderboards-page";
+
 const paramsSchema = z.object({
   year: z.coerce.number(),
   month: z.coerce.number(),
   day: z.coerce.number(),
+});
+
+const searchParamsSchema = z.object({
+  page: z.coerce.number().optional().default(1),
 });
 
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -29,7 +36,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: title }];
 };
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
 
   if (!success) {
@@ -55,7 +62,19 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
     );
   }
 
-  return { ...parsedData };
+  const url = new URL(request.url);
+  const products = await getProductsByDateRange({
+    startDate: date.startOf("day"),
+    endDate: date.endOf("day"),
+    limit: PAGE_SIZE,
+    page: Number(url.searchParams.get("page") || 1),
+  });
+  const pages = await getProductPagesByDateRange({
+    startDate: date.startOf("day"),
+    endDate: date.endOf("day"),
+  });
+
+  return { ...parsedData, products, pages };
 };
 
 export default function DailyLeaderboardsPage({
@@ -98,21 +117,21 @@ export default function DailyLeaderboardsPage({
       </div>
 
       <div className="space-y-5 w-full max-w-screen-lg mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => {
+        {loaderData.products.map((product) => {
           return (
             <ProductCard
-              id={`productId-${index}`}
-              title="Product Name"
-              description="The best product made by our community today."
-              commentCount={12}
-              viewCount={12}
-              upvoteCount={82}
+              id={product.product_id.toString()}
+              title={product.name}
+              description={product.description}
+              reviewsCount={product.reviews.toString()}
+              viewsCount={product.views.toString()}
+              upvotesCount={product.upvotes.toString()}
             />
           );
         })}
       </div>
 
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.pages} />
     </div>
   );
 }

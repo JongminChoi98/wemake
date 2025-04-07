@@ -13,18 +13,18 @@ interface ProductCardProps {
   id: string;
   title: string;
   description: string;
-  commentCount: number;
-  viewCount: number;
-  upvoteCount: number;
+  reviewsCount: string;
+  viewsCount: string;
+  upvotesCount: string;
 }
 
 export function ProductCard({
   id,
   title,
   description,
-  commentCount,
-  viewCount,
-  upvoteCount,
+  reviewsCount,
+  viewsCount,
+  upvotesCount,
 }: ProductCardProps) {
   return (
     <Link to={`/products/${id}`} className="block">
@@ -37,18 +37,18 @@ export function ProductCard({
           <div className="flex items-center gap-4 mt-2">
             <div className="flex items-center gap-px text-xs text-muted-foreground">
               <MessageCircleIcon className="w-4 h-4" />
-              <span>{commentCount}</span>
+              <span>{reviewsCount}</span>
             </div>
             <div className="flex items-center gap-px text-xs text-muted-foreground">
               <EyeIcon className="w-4 h-4" />
-              <span>{viewCount}</span>
+              <span>{viewsCount}</span>
             </div>
           </div>
         </CardHeader>
         <CardFooter className="py-0">
           <Button variant="outline" className="flex flex-col h-14">
             <ChevronUpIcon className="size-4 shrink-0" />
-            <span>{upvoteCount}</span>
+            <span>{upvotesCount}</span>
           </Button>
         </CardFooter>
       </Card>

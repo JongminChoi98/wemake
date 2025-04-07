@@ -52,9 +52,9 @@ export default function SearchPage({ loaderData }: Route.ComponentProps) {
             id={`productId-${index}`}
             title="Product Name"
             description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            reviewsCount="12"
+            viewsCount="12"
+            upvotesCount="120"
           />
         ))}
       </div>
