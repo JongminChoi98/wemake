@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
+import { getPosts } from "~/features/community/queries";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { ProductCard } from "~/features/products/components/product-card";
@@ -20,7 +21,12 @@ export const loader = async () => {
     limit: 7,
   });
 
-  return { products };
+  const posts = await getPosts({
+    limit: 7,
+    sorting: "newest",
+  });
+
+  return { products, posts };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -68,15 +74,17 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
           </Button>
         </div>
 
-        {Array.from({ length: 11 }).map((_, index) => {
+        {loaderData.posts.map((post) => {
           return (
             <PostCard
-              id={index}
-              title="What is the best productivity tool?"
-              author="Joey"
-              authorAvatarUrl="https://github.com/shadcn.png"
-              category="Productivity"
-              createdAt="12 hours ago"
+              key={post.post_id}
+              id={post.post_id}
+              title={post.title}
+              author={post.author}
+              authorAvatarUrl={post.author_avatar}
+              category={post.topic}
+              createdAt={post.created_at}
+              votesCount={post.upvotes}
             />
           );
         })}
