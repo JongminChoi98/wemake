@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { PostCard } from "~/features/community/components/post-card";
 import { getPosts } from "~/features/community/queries";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
+import { getGptIdeas } from "~/features/ideas/queries";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { ProductCard } from "~/features/products/components/product-card";
 import { getProductsByDateRange } from "~/features/products/queries";
@@ -26,7 +27,9 @@ export const loader = async () => {
     sorting: "newest",
   });
 
-  return { products, posts };
+  const ideas = await getGptIdeas({ limit: 7 });
+
+  return { products, posts, ideas };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -103,15 +106,16 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
             <Link to="/ideas">Explore all ideas &rarr;</Link>
           </Button>
         </div>
-        {Array.from({ length: 11 }).map((_, index) => {
+        {loaderData.ideas.map((idea) => {
           return (
             <IdeaCard
-              id={`ideaId-${index}`}
-              title="A startup that creates an AI-powered generated personal trainer, devlivering customized fitness recommendations and tracking of progress using a mobile app to treack workouts and progress as well as a website to manage the business."
-              viewCount={123}
-              createdAt="12 hours ago"
-              likeCount={12}
-              claimed={index % 2 === 0}
+              key={idea.gpt_idea_id}
+              id={idea.gpt_idea_id}
+              title={idea.idea}
+              viewCount={idea.views}
+              createdAt={idea.created_at}
+              likeCount={idea.likes}
+              claimed={idea.is_claimed}
             />
           );
         })}
