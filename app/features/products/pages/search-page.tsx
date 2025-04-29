@@ -5,6 +5,7 @@ import ProductPagination from "~/common/components/product-pagination";
 import { Button } from "~/common/components/ui/button";
 import { Input } from "~/common/components/ui/input";
 import { ProductCard } from "../components/product-card";
+import { getPagesBySearch, getProductsBySearch } from "../queries";
 import type { Route } from "./+types/search-page";
 
 export const meta: Route.MetaFunction = () => {
@@ -14,20 +15,30 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-const paramsSchema = z.object({
+const searchParams = z.object({
   query: z.string().optional().default(""),
   page: z.coerce.number().optional().default(1),
 });
 
-export function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const { success, data: parsedData } = paramsSchema.safeParse(
+  const { success, data: parsedData } = searchParams.safeParse(
     Object.fromEntries(url.searchParams)
   );
 
   if (!success) {
     throw new Error("Invalid search params");
   }
+
+  if (parsedData.query === "") {
+    return { products: [], totalPages: 1 };
+  }
+  const products = await getProductsBySearch({
+    query: parsedData.query,
+    page: parsedData.page,
+  });
+  const totalPages = await getPagesBySearch({ query: parsedData.query });
+  return { products, totalPages };
 }
 
 export default function SearchPage({ loaderData }: Route.ComponentProps) {
@@ -46,19 +57,19 @@ export default function SearchPage({ loaderData }: Route.ComponentProps) {
         <Button type="submit">Search</Button>
       </Form>
       <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={`productId-${index}`}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            reviewsCount="12"
-            viewsCount="12"
-            upvotesCount="120"
+            key={product.product_id}
+            id={product.product_id}
+            title={product.name}
+            description={product.tagline}
+            reviewsCount={product.reviews}
+            viewsCount={product.views}
+            upvotesCount={product.upvotes}
           />
         ))}
       </div>
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }

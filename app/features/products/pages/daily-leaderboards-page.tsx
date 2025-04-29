@@ -122,7 +122,7 @@ export default function DailyLeaderboardsPage({
             <ProductCard
               id={product.product_id.toString()}
               title={product.name}
-              description={product.description}
+              description={product.tagline}
               reviewsCount={product.reviews.toString()}
               viewsCount={product.views.toString()}
               upvotesCount={product.upvotes.toString()}

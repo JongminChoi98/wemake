@@ -1,6 +1,12 @@
+import { z } from "zod";
 import { Hero } from "~/common/components/hero";
 import ProductPagination from "~/common/components/product-pagination";
 import { ProductCard } from "../components/product-card";
+import {
+  getCategory,
+  getCategoryPages,
+  getProductsByCategory,
+} from "../queries";
 import type { Route } from "./+types/category-page";
 
 export const meta = ({ params }: Route.MetaArgs) => {
@@ -10,28 +16,48 @@ export const meta = ({ params }: Route.MetaArgs) => {
   ];
 };
 
-export default function CategoryPage() {
+const paramsSchema = z.object({
+  category: z.coerce.number(),
+});
+
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const { data, success } = paramsSchema.safeParse(params);
+  if (!success) {
+    throw new Response("Invalid category", { status: 400 });
+  }
+  const category = await getCategory(data.category);
+  const products = await getProductsByCategory({
+    categoryId: data.category,
+    page: Number(page),
+  });
+  const totalPages = await getCategoryPages(data.category);
+  return { category, products, totalPages };
+};
+
+export default function CategoryPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-10">
       <Hero
-        title={"Developer Tools"}
-        subtitle={`Tools for developers to build products faster`}
+        title={loaderData.category.name}
+        subtitle={loaderData.category.description}
       />
 
       <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={`productId-${index}`}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            reviewsCount="12"
-            viewsCount="12"
-            upvotesCount="120"
+            key={product.product_id}
+            id={product.product_id}
+            title={product.name}
+            description={product.tagline}
+            reviewsCount={product.reviews}
+            viewsCount={product.views}
+            upvotesCount={product.upvotes}
           />
         ))}
       </div>
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }
