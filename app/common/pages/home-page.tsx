@@ -9,6 +9,7 @@ import { getJobs } from "~/features/jobs/queries";
 import { ProductCard } from "~/features/products/components/product-card";
 import { getProductsByDateRange } from "~/features/products/queries";
 import { TeamCard } from "~/features/teams/components/team-card";
+import { getTeams } from "~/features/teams/queries";
 import { Button } from "../components/ui/button";
 import type { Route } from "./+types/home-page";
 export const meta = () => [
@@ -30,8 +31,9 @@ export const loader = async () => {
 
   const ideas = await getGptIdeas({ limit: 7 });
   const jobs = await getJobs({ limit: 11 });
+  const teams = await getTeams({ limit: 7 });
 
-  return { products, posts, ideas, jobs };
+  return { products, posts, ideas, jobs, teams };
 };
 
 export default function HomePage({ loaderData }: Route.ComponentProps) {
@@ -168,18 +170,14 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
           </Button>
         </div>
 
-        {Array.from({ length: 7 }).map((_, index) => (
+        {loaderData.teams.map((team) => (
           <TeamCard
-            key={index}
-            id={`teamId-${index}`}
-            leaderUsername="joey"
-            leaderAvatarUrl="https://github.com/JongminChoi98.png"
-            positions={[
-              "React Developer",
-              "Backend Developer",
-              "Product Manager",
-            ]}
-            projectTitle="a new driving platform"
+            key={team.team_id}
+            id={team.team_id}
+            leaderUsername={team.team_leader.username}
+            leaderAvatarUrl={team.team_leader.avatar}
+            positions={team.roles.split(",")}
+            projectTitle={team.product_description}
           />
         ))}
       </div>

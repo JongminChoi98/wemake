@@ -64,6 +64,20 @@
       "when": 1744062541801,
       "tag": "0008_skinny_roland_deschain",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1745898626205,
+      "tag": "0009_slippery_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1745898824717,
+      "tag": "0010_cynical_scarlet_spider",
+      "breakpoints": true
     }
   ]
 }
