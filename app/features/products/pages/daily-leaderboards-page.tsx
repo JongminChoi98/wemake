@@ -120,7 +120,8 @@ export default function DailyLeaderboardsPage({
         {loaderData.products.map((product) => {
           return (
             <ProductCard
-              id={product.product_id.toString()}
+              key={product.product_id}
+              id={product.product_id}
               title={product.name}
               description={product.tagline}
               reviewsCount={product.reviews.toString()}

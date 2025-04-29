@@ -64,6 +64,7 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
         {loaderData.dailyProducts.map((product) => {
           return (
             <ProductCard
+              key={product.product_id}
               id={product.product_id.toString()}
               title={product.name}
               description={product.tagline}
@@ -93,6 +94,7 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
         {loaderData.weeklyProducts.map((product) => {
           return (
             <ProductCard
+              key={product.product_id}
               id={product.product_id.toString()}
               title={product.name}
               description={product.tagline}
@@ -122,6 +124,7 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
         {loaderData.monthlyProducts.map((product) => {
           return (
             <ProductCard
+              key={product.product_id}
               id={product.product_id.toString()}
               title={product.name}
               description={product.tagline}
@@ -151,6 +154,7 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
         {loaderData.yearlyProducts.map((product) => {
           return (
             <ProductCard
+              key={product.product_id}
               id={product.product_id.toString()}
               title={product.name}
               description={product.tagline}
