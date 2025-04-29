@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { Link } from "react-router";
 import { Badge } from "~/common/components/ui/badge";
 import { Button } from "~/common/components/ui/button";
@@ -10,7 +11,7 @@ import {
 } from "~/common/components/ui/card";
 
 interface JobCardProps {
-  id: string;
+  id: number;
   company: string;
   companyLogoUrl: string;
   title: string;
@@ -38,20 +39,34 @@ export function JobCard({
         <CardHeader>
           <div className="flex items-center gap-4 mb-4">
             <img
-              src={companyLogoUrl}
+              src={
+                companyLogoUrl.startsWith("http")
+                  ? companyLogoUrl
+                  : `https://${companyLogoUrl}`
+              }
               alt={`${company} Logo`}
               className="size-10 rounded-full"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://via.placeholder.com/40";
+              }}
             />
             <div className="space-x-2">
               <span className="text-accent-foreground">{company}</span>
-              <span className="text-xs text-muted-foreground">{createdAt}</span>
+              <span className="text-xs text-muted-foreground">
+                {DateTime.fromISO(createdAt).toRelative()}
+              </span>
             </div>
           </div>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Badge variant="outline">{type}</Badge>
-          <Badge variant="outline">{positionLocation}</Badge>
+          <Badge variant="outline" className="capitalize">
+            {type}
+          </Badge>
+          <Badge variant="outline" className="capitalize">
+            {positionLocation}
+          </Badge>
         </CardContent>
         <CardFooter className="flex justify-between">
           <div className="flex flex-col gap-1">

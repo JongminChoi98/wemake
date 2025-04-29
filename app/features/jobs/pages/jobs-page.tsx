@@ -1,11 +1,12 @@
-import { useSearchParams } from "react-router";
+import { data, useSearchParams } from "react-router";
+import { z } from "zod";
 import { Hero } from "~/common/components/hero";
 import { Button } from "~/common/components/ui/button";
 import { cn } from "~/lib/utils";
 import { JobCard } from "../components/job-card";
 import { JOB_TYPES, LOCATION_TYPES, SALARY_RANGE } from "../constants";
+import { getJobs } from "../queries";
 import type { Route } from "./+types/jobs-page";
-
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Jobs | wemake" },
@@ -13,7 +14,40 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function JobsPage() {
+const searchParamsSchema = z.object({
+  type: z
+    .enum(JOB_TYPES.map((type) => type.value) as [string, ...string[]])
+    .optional(),
+  location: z
+    .enum(LOCATION_TYPES.map((type) => type.value) as [string, ...string[]])
+    .optional(),
+  salary: z.enum(SALARY_RANGE).optional(),
+});
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const { success, data: parsedData } = searchParamsSchema.safeParse(
+    Object.fromEntries(url.searchParams)
+  );
+  if (!success) {
+    throw data(
+      {
+        error_code: "invalid_search_params",
+        message: "Invalid search params",
+      },
+      { status: 400 }
+    );
+  }
+  const jobs = await getJobs({
+    limit: 40,
+    location: parsedData.location,
+    type: parsedData.type,
+    salary: parsedData.salary,
+  });
+  return { jobs };
+};
+
+export default function JobsPage({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const onFilterClick = (key: string, value: string) => {
     searchParams.set(key, value);
@@ -24,20 +58,22 @@ export default function JobsPage() {
       <Hero title="Jobs" subtitle="Companies looking for makers" />
       <div className="grid grid-cols-1 xl:grid-cols-6 gap-20 items-start">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:col-span-4 gap-5">
-          {Array.from({ length: 20 }).map((_, index) => (
-            <JobCard
-              key={`jobId-${index}`}
-              id={`jobId-${index}`}
-              company="Tesla"
-              companyLogoUrl="https://github.com/facebook.png"
-              companyHq="San Francisco, CA"
-              title="Software Engineer"
-              type="Full-time"
-              positionLocation="Remote"
-              salary="$100,000 - $120,000"
-              createdAt="12 hours ago"
-            />
-          ))}
+          {loaderData.jobs.map((job) => {
+            return (
+              <JobCard
+                key={job.job_id}
+                id={job.job_id}
+                company={job.company_name}
+                companyLogoUrl={job.company_logo}
+                companyHq={job.company_location}
+                title={job.position}
+                createdAt={job.created_at}
+                type={job.job_type}
+                positionLocation={job.location}
+                salary={job.salary_range}
+              />
+            );
+          })}
         </div>
         <div className="xl:col-span-2 sticky top-20flex flex-col gap-10">
           <div className="flex flex-col items-start gap-2.5">
@@ -45,6 +81,7 @@ export default function JobsPage() {
             <div className="flex flex-wrap gap-2">
               {JOB_TYPES.map((type) => (
                 <Button
+                  key={type.value}
                   variant={"outline"}
                   onClick={() => onFilterClick("type", type.value)}
                   className={cn(
@@ -63,6 +100,7 @@ export default function JobsPage() {
             <div className="flex flex-wrap gap-2">
               {LOCATION_TYPES.map((type) => (
                 <Button
+                  key={type.value}
                   variant={"outline"}
                   onClick={() => onFilterClick("location", type.value)}
                   className={cn(
@@ -83,6 +121,7 @@ export default function JobsPage() {
             <div className="flex flex-wrap gap-2">
               {SALARY_RANGE.map((range) => (
                 <Button
+                  key={range}
                   variant={"outline"}
                   onClick={() => onFilterClick("salary", range)}
                   className={cn(
