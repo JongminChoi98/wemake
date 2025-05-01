@@ -17,7 +17,7 @@ import {
 import { Button } from "~/common/components/ui/button";
 import { Textarea } from "~/common/components/ui/textarea";
 import { Reply } from "../components/reply";
-import { getPostById } from "../queries";
+import { getPostById, getReplies } from "../queries";
 import type { Route } from "./+types/post-page";
 
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -26,7 +26,9 @@ export const meta: Route.MetaFunction = ({ params }) => {
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const post = await getPostById(params.postId);
-  return { post };
+  const replies = await getReplies(params.postId);
+
+  return { post, replies };
 };
 
 export default function PostPage({ loaderData }: Route.ComponentProps) {
@@ -56,7 +58,7 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="grid grid-cols-6 gap-40 items-start">
-        <div className="col-span-4 space-y-10">
+        <div className="col-span-4 space-y-10 w-full">
           <div className="flex w-full items-start gap-10">
             <Button variant="outline" className="flex flex-col h-14">
               <ChevronUpIcon className="size-4 shrink-0" />
@@ -97,13 +99,16 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                   {loaderData.post.replies} Replies
                 </h4>
                 <div className="flex flex-col gap-5">
-                  <Reply
-                    username="Joey"
-                    avatarUrl="https://github.com/JongminChoi98.png"
-                    content="I've been using Todoist for a while now, and it's really great. It's simple, easy to use, and has a lot of features."
-                    timestamp="12 hours ago"
-                    topLevel
-                  />
+                  {loaderData.replies.map((reply) => (
+                    <Reply
+                      username={reply.user.name}
+                      avatarUrl={reply.user.avatar}
+                      content={reply.reply}
+                      timestamp={reply.created_at}
+                      topLevel={true}
+                      replies={reply.post_replies}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
