@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import client from "~/supabase-client";
 import { PAGE_SIZE } from "./contants";
 
-const productListSelect = `
+export const productListSelect = `
 product_id,
 name,
 tagline,

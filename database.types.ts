@@ -616,7 +616,7 @@ export type Database = {
             referencedColumns: ["category_id"]
           },
           {
-            foreignKeyName: "products_profile_id_profiles_profile_id_fk"
+            foreignKeyName: "products_to_profiles"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
