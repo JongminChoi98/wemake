@@ -1,4 +1,5 @@
 import { Hero } from "~/common/components/hero";
+import { makeSSRClient } from "~/supabase-client";
 import { CategoryCard } from "../components/category-card";
 import { getCategories } from "../queries";
 import type { Route } from "./+types/categories-page";
@@ -10,8 +11,9 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
-  const categories = await getCategories();
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const categories = await getCategories(client);
   return { categories };
 };
 

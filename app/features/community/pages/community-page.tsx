@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "~/common/components/ui/dropdown-menu";
 import { Input } from "~/common/components/ui/input";
+import { makeSSRClient } from "~/supabase-client";
 import { PostCard } from "../components/post-card";
 import { PERIOD_OPTIONS, SORT_OPTIONS } from "../constants";
 import { getPosts, getTopics } from "../queries";
@@ -30,6 +31,7 @@ const searchParamsSchema = z.object({
 });
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
   const url = new URL(request.url);
 
   const { success, data: parsedData } = searchParamsSchema.safeParse(
@@ -47,8 +49,8 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   }
 
   const [topics, posts] = await Promise.all([
-    getTopics(),
-    getPosts({
+    getTopics(client),
+    getPosts(client, {
       limit: 20,
       sorting: parsedData.sorting,
       period: parsedData.period,

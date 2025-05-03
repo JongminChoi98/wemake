@@ -4,6 +4,7 @@ import { Hero } from "~/common/components/hero";
 import ProductPagination from "~/common/components/product-pagination";
 import { Button } from "~/common/components/ui/button";
 import { Input } from "~/common/components/ui/input";
+import { makeSSRClient } from "~/supabase-client";
 import { ProductCard } from "../components/product-card";
 import { getPagesBySearch, getProductsBySearch } from "../queries";
 import type { Route } from "./+types/search-page";
@@ -33,11 +34,14 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (parsedData.query === "") {
     return { products: [], totalPages: 1 };
   }
-  const products = await getProductsBySearch({
+  const { client } = makeSSRClient(request);
+  const products = await getProductsBySearch(client, {
     query: parsedData.query,
     page: parsedData.page,
   });
-  const totalPages = await getPagesBySearch({ query: parsedData.query });
+  const totalPages = await getPagesBySearch(client, {
+    query: parsedData.query,
+  });
   return { products, totalPages };
 }
 

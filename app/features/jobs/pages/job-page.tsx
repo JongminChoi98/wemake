@@ -2,6 +2,7 @@ import { DotIcon } from "lucide-react";
 import { DateTime } from "luxon";
 import { Badge } from "~/common/components/ui/badge";
 import { Button } from "~/common/components/ui/button";
+import { makeSSRClient } from "~/supabase-client";
 import { getJobById } from "../queries";
 import type { Route } from "./+types/job-page";
 
@@ -9,8 +10,9 @@ export const meta: Route.MetaFunction = () => {
   return [{ title: "Job Details | wemake" }];
 };
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-  const job = await getJobById(params.jobId);
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const job = await getJobById(client, params.jobId);
   return { job };
 };
 

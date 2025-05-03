@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Hero } from "~/common/components/hero";
 import ProductPagination from "~/common/components/product-pagination";
+import { makeSSRClient } from "~/supabase-client";
 import { ProductCard } from "../components/product-card";
 import {
   getCategory,
@@ -27,12 +28,13 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   if (!success) {
     throw new Response("Invalid category", { status: 400 });
   }
-  const category = await getCategory(data.category);
-  const products = await getProductsByCategory({
+  const { client } = makeSSRClient(request);
+  const category = await getCategory(client, data.category);
+  const products = await getProductsByCategory(client, {
     categoryId: data.category,
     page: Number(page),
   });
-  const totalPages = await getCategoryPages(data.category);
+  const totalPages = await getCategoryPages(client, data.category);
   return { category, products, totalPages };
 };
 

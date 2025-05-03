@@ -1,4 +1,5 @@
 import { Hero } from "~/common/components/hero";
+import { makeSSRClient } from "~/supabase-client";
 import { IdeaCard } from "../components/idea-card";
 import { getGptIdeas } from "../queries";
 import type { Route } from "./+types/ideas-page";
@@ -10,8 +11,9 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
-  const ideas = await getGptIdeas({ limit: 20 });
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const ideas = await getGptIdeas(client, { limit: 20 });
   return { ideas };
 };
 

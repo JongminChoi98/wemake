@@ -2,6 +2,7 @@ import { ChevronUpIcon, StarIcon } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router";
 import { Button, buttonVariants } from "~/common/components/ui/button";
 import { cn } from "~/lib/utils";
+import { makeSSRClient } from "~/supabase-client";
 import { getProductById } from "../queries";
 import type { Route } from "./+types/product-overview-layout";
 
@@ -13,9 +14,11 @@ export function meta({ data }: Route.MetaArgs) {
 }
 
 export const loader = async ({
+  request,
   params,
 }: Route.LoaderArgs & { params: { productId: string } }) => {
-  const product = await getProductById(params.productId);
+  const { client } = makeSSRClient(request);
+  const product = await getProductById(client, params.productId);
   return { product };
 };
 

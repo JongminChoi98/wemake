@@ -1,12 +1,14 @@
 import { Hero } from "~/common/components/hero";
+import { makeSSRClient } from "~/supabase-client";
 import { TeamCard } from "../components/team-card";
 import { getTeams } from "../queries";
 import type { Route } from "./+types/teams-page";
 
 export const meta: Route.MetaFunction = () => [{ title: "Teams | wemake" }];
 
-export const loader = async () => {
-  const teams = await getTeams({ limit: 8 });
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const teams = await getTeams(client, { limit: 8 });
   return { teams };
 };
 

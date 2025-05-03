@@ -1,13 +1,15 @@
 import { useOutletContext } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { Dialog, DialogTrigger } from "~/common/components/ui/dialog";
+import { makeSSRClient } from "~/supabase-client";
 import { CreateReviewDialog } from "../components/create-review-dialog";
 import { ReviewCard } from "../components/review-card";
 import { getReviews } from "../queries";
 import type { Route } from "./+types/product-reviews-page";
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-  const reviews = await getReviews(params.productId);
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const reviews = await getReviews(client, params.productId);
   return { reviews };
 };
 

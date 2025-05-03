@@ -16,17 +16,19 @@ import {
 } from "~/common/components/ui/dialog";
 import { Textarea } from "~/common/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import { makeSSRClient } from "~/supabase-client";
 import { getUserProfile } from "../queries";
 import type { Route } from "./+types/profile-layout";
-
 export const meta: Route.MetaFunction = ({ data }) => {
   return [{ title: `${data.user.name} | wemake` }];
 };
 
 export const loader = async ({
+  request,
   params,
 }: Route.LoaderArgs & { params: { username: string } }) => {
-  const user = await getUserProfile(params.username);
+  const { client } = makeSSRClient(request);
+  const user = await getUserProfile(client, params.username);
   return { user };
 };
 

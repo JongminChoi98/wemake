@@ -16,6 +16,7 @@ import {
 } from "~/common/components/ui/breadcrumb";
 import { Button } from "~/common/components/ui/button";
 import { Textarea } from "~/common/components/ui/textarea";
+import { makeSSRClient } from "~/supabase-client";
 import { Reply } from "../components/reply";
 import { getPostById, getReplies } from "../queries";
 import type { Route } from "./+types/post-page";
@@ -24,9 +25,10 @@ export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: `${params.postId} | wemake` }];
 };
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-  const post = await getPostById(params.postId);
-  const replies = await getReplies(params.postId);
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const post = await getPostById(client, params.postId);
+  const replies = await getReplies(client, params.postId);
 
   return { post, replies };
 };
