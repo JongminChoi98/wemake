@@ -13,6 +13,7 @@ import { Settings } from "luxon";
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { Navigation } from "./common/components/navigation";
+import { getUserById } from "./features/users/queries";
 import { cn } from "./lib/utils";
 import { makeSSRClient } from "./supabase-client";
 export const links: Route.LinksFunction = () => [
@@ -54,7 +55,11 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const {
     data: { user },
   } = await client.auth.getUser();
-  return { user };
+  if (user) {
+    const profile = await getUserById(client, { id: user?.id });
+    return { user, profile };
+  }
+  return { user: null, profile: null };
 };
 
 export default function App({ loaderData }: Route.ComponentProps) {
@@ -72,6 +77,9 @@ export default function App({ loaderData }: Route.ComponentProps) {
       {pathname.includes("/auth/") ? null : (
         <Navigation
           isLoggedIn={isLoggedIn}
+          username={loaderData.profile?.username ?? ""}
+          avatar={loaderData.profile?.avatar ?? ""}
+          name={loaderData.profile?.name ?? ""}
           hasNotifications={true}
           hasMessages={true}
         />
