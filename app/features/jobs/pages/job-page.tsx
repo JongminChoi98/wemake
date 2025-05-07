@@ -6,8 +6,8 @@ import { makeSSRClient } from "~/supabase-client";
 import { getJobById } from "../queries";
 import type { Route } from "./+types/job-page";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: "Job Details | wemake" }];
+export const meta: Route.MetaFunction = ({ data }) => {
+  return [{ title: `${data.job.position} | wemake` }];
 };
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
@@ -26,7 +26,9 @@ export default function JobPage({ loaderData }: Route.ComponentProps) {
             <div className="size-40 bg-white rounded-full  overflow-hidden relative left-10">
               <img src={loaderData.job.company_logo} className="object-cover" />
             </div>
-            <h1 className="text-4xl font-bold">{loaderData.job.position}</h1>
+            <h1 className="text-4xl font-bold mt-5">
+              {loaderData.job.position}
+            </h1>
             <h4 className="text-lg text-muted-foreground">
               {loaderData.job.company_name}
             </h4>
@@ -93,7 +95,9 @@ export default function JobPage({ loaderData }: Route.ComponentProps) {
           </div>
           <div className="flex">
             <span className=" text-sm text-muted-foreground">
-              Posted {DateTime.fromISO(loaderData.job.created_at).toRelative()}
+              {DateTime.fromISO(loaderData.job.created_at!, {
+                zone: "utc",
+              }).toRelative({ unit: "hours" })}
             </span>
             <DotIcon className="size-4" />
             <span className=" text-sm text-muted-foreground">395 views</span>

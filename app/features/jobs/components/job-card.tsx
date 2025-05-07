@@ -54,7 +54,9 @@ export function JobCard({
             <div className="space-x-2">
               <span className="text-accent-foreground">{company}</span>
               <span className="text-xs text-muted-foreground">
-                {DateTime.fromISO(createdAt).toRelative()}
+                {DateTime.fromISO(createdAt, {
+                  zone: "utc",
+                }).toRelative({ unit: "hours" })}
               </span>
             </div>
           </div>
