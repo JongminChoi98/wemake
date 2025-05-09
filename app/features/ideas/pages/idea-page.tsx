@@ -1,8 +1,11 @@
 import { DotIcon, EyeIcon, HeartIcon } from "lucide-react";
 import { DateTime } from "luxon";
+import { Form, redirect } from "react-router";
 import { Hero } from "~/common/components/hero";
 import { Button } from "~/common/components/ui/button";
+import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supabase-client";
+import { claimIdea } from "../mutations";
 import { getGptIdea } from "../queries";
 import type { Route } from "./+types/idea-page";
 
@@ -20,12 +23,26 @@ export const meta = ({
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
   const idea = await getGptIdea(client, Number(params.ideaId));
+  if (idea.is_claimed) {
+    throw redirect(`/ideas`);
+  }
   return { idea };
+};
+
+export const action = async ({ request, params }: Route.ActionArgs) => {
+  const { client } = makeSSRClient(request);
+  const userId = await getLoggedInUserId(client);
+  const idea = await getGptIdea(client, Number(params.ideaId));
+  if (idea.is_claimed) {
+    return { ok: false };
+  }
+  await claimIdea(client, { ideaId: params.ideaId, userId });
+  return redirect(`/my/dashboard/ideas`);
 };
 
 export default function IdeaPage({ loaderData }: Route.ComponentProps) {
   return (
-    <div className="">
+    <div>
       <Hero title={`Idea #${loaderData.idea.gpt_idea_id}`} />
       <div className="max-w-screen-sm mx-auto flex flex-col items-center gap-10">
         <p className="italic text-center">{loaderData.idea.idea}</p>
@@ -44,7 +61,11 @@ export default function IdeaPage({ loaderData }: Route.ComponentProps) {
             <span>{loaderData.idea.likes}</span>
           </Button>
         </div>
-        <Button size="lg">Claim idea now &rarr;</Button>
+        {loaderData.idea.is_claimed ? null : (
+          <Form method="post">
+            <Button size="lg">Claim idea</Button>
+          </Form>
+        )}
       </div>
     </div>
   );
