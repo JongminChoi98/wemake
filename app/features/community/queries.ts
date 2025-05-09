@@ -98,7 +98,8 @@ export const getReplies = async (
       )
       `
     )
-    .eq("post_id", parseInt(postId));
+    .eq("post_id", parseInt(postId))
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };
