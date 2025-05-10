@@ -1,4 +1,4 @@
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -11,44 +11,48 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "~/common/components/ui/chart";
-import type { Route } from "./+types/dashboard-product-page";
+import { makeSSRClient } from "~/supabase-client";
+import { getLoggedInUserId } from "../queries";
+import type { Route } from "./+types/dashboard-page";
 
 export const meta: Route.MetaFunction = () => {
-  return [{ title: "Product Dashboard | wemake" }];
+  return [{ title: "Dashboard | wemake" }];
 };
 
-const chartData = [
-  { month: "January", views: 186, visitors: 100 },
-  { month: "February", views: 305, visitors: 34 },
-  { month: "March", views: 237, visitors: 65 },
-  { month: "April", views: 73, visitors: 32 },
-  { month: "May", views: 209, visitors: 66 },
-  { month: "June", views: 214, visitors: 434 },
-];
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = await makeSSRClient(request);
+  const userId = await getLoggedInUserId(client);
+  const { data, error } = await client.rpc("get_dashboard_stats", {
+    user_id: userId,
+  });
+  if (error) {
+    throw error;
+  }
+  return {
+    chartData: data,
+  };
+};
+
 const chartConfig = {
   views: {
-    label: "Page Views",
+    label: "👁️",
     color: "hsl(var(--primary))",
-  },
-  visitors: {
-    label: "Visitors",
-    color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
 
-export default function DashboardProductPage() {
+export default function DashboardPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl font-semibold mb-6">Analytics</h1>
+      <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
       <Card className="w-1/2">
         <CardHeader>
-          <CardTitle>Performance</CardTitle>
+          <CardTitle>Profile views</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
-            <AreaChart
+            <LineChart
               accessibilityLayer
-              data={chartData}
+              data={loaderData.chartData}
               margin={{
                 left: 12,
                 right: 12,
@@ -60,30 +64,20 @@ export default function DashboardProductPage() {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)}
+                padding={{ left: 15, right: 15 }}
               />
-              <Area
+              <Line
                 dataKey="views"
                 type="natural"
                 stroke="var(--color-views)"
-                fill="var(--color-views)"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Area
-                dataKey="visitors"
-                type="natural"
-                stroke="var(--color-visitors)"
-                fill="var(--color-visitors)"
                 strokeWidth={2}
                 dot={false}
               />
               <ChartTooltip
                 cursor={false}
-                wrapperStyle={{ minWidth: "200px" }}
-                content={<ChartTooltipContent indicator="dot" />}
+                content={<ChartTooltipContent hideLabel />}
               />
-            </AreaChart>
+            </LineChart>
           </ChartContainer>
         </CardContent>
       </Card>
