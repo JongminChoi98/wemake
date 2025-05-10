@@ -115,7 +115,7 @@ const menus = [
       {
         name: "Create a Post",
         description: "Create a post in the community",
-        to: "/community/create",
+        to: "/community/submit",
       },
     ],
   },
